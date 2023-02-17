@@ -5,7 +5,99 @@
   <link rel="stylesheet" type="text/css" href="/style.css">
   
   <script>
+    const handleResponse = async (response) => {
+      const content = document.querySelector('#content');
 
+      switch (response.status){
+        case 200:
+          content.innerHTML = '<b>Success</b>';
+          break;
+        case 201:
+          content.innerHTML = '<b>Created</b>';
+          break;
+        case 204:
+          content.innerHTML = '<b>Updated (No Content)</b>';
+          break;
+        case 400:
+          content.innerHTML = '<b>Bad Request</b>';
+          break;
+        case 404:
+          content.innerHTML = '<b>Not Found</b>';
+          break;
+        default:
+          content.innerHTML = '<b>Error Code Not Implemented</b>';
+          break;
+      }
+
+      const obj = await response.json();
+      if (obj.users){
+        content.innerHTML += `<p>${JSON.stringify(obj.users)}</p>`;
+      } else if (obj.message) {
+        content.innerHTML += `<p>${obj.message}</p>`;
+      }
+    };
+
+    const sendPost = async (nameForm) => {
+      const action = nameForm.getAttribute('action');
+      const method = nameForm.getAttribute('method');
+
+      const name = nameForm.querySelector('#nameField').value;
+      const age = nameForm.querySelector('#ageField').value;
+
+      const formData = `name=${name}&age=${age}`;
+
+      const response = await fetch(action, {
+        method: method,
+        headers: {
+          'content-type': 'application/x-www-form-urlencoded',
+          'accept': 'application/json',
+        },
+        body: formData,
+      });
+
+      handleResponse(response);
+    };
+
+    const sendFetch = async (userForm) => {
+      try{
+        const method = userForm.querySelector('#methodSelect').value;
+
+        const options = {
+          method: method,
+          headers: {
+            'Accept': 'application/json',
+          }
+        };
+
+        const response = await fetch(userForm.querySelector('#urlField').value, options);
+        handleResponse(response);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    // Init Function
+    const init = () => {
+      const nameForm = document.querySelector('#nameForm');
+      const userForm = document.querySelector('#userForm')
+
+      const addUser = (e) => {
+        e.preventDefault();
+        sendPost(nameForm);
+        return false;
+      };
+
+      const getUser = (e) => {
+        e.preventDefault();
+        sendFetch(userForm);
+        return false;
+      };
+
+      nameForm.addEventListener('submit', addUser);
+      userForm.addEventListener('submit', getUser);
+    };
+
+    window.onload = init;
   </script>
 </head>
 <body>
