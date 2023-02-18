@@ -10,41 +10,41 @@ const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
 // URL Structs
 const getUrlStruct = {
-    '/': htmlHandler.getClient,
-    '/style.css': htmlHandler.getStyle,
-    '/getUsers': jsonHandler.getUsers,
-    notFound: jsonHandler.getNotFound,
+  '/': htmlHandler.getClient,
+  '/style.css': htmlHandler.getStyle,
+  '/getUsers': jsonHandler.getUsers,
+  notFound: jsonHandler.getNotFound,
 };
 
 const headUrlStruct = {
-    '/getUsers': jsonHandler.getUsersMeta,
-    notFound: jsonHandler.getNotFoundMeta,
+  '/getUsers': jsonHandler.getUsersMeta,
+  notFound: jsonHandler.getNotFoundMeta,
 };
 
 const postUrlStruct = {
-    '/addUser': jsonHandler.addUser,
+  '/addUser': jsonHandler.addUser,
 };
 
 // Parse Post Function
 const parseBody = (request, response, handlerFunction) => {
-    const body = [];
+  const body = [];
 
-    request.on('error', (err) => {
-        console.log(err);
-        response.statusCode = 400;
-        response.end();
-    });
+  request.on('error', (err) => {
+    console.log(err);
+    response.statusCode = 400;
+    response.end();
+  });
 
-    request.on('data', (chunk) => {
-        body.push(chunk);
-    });
+  request.on('data', (chunk) => {
+    body.push(chunk);
+  });
 
-    request.on('end', () => {
-        const bodyString = Buffer.concat(body).toString();
-        const bodyParams = query.parse(bodyString);
+  request.on('end', () => {
+    const bodyString = Buffer.concat(body).toString();
+    const bodyParams = query.parse(bodyString);
 
-        handlerFunction(request, response, bodyParams);
-    });
+    handlerFunction(request, response, bodyParams);
+  });
 };
 
 // Handle Functions
@@ -59,23 +59,23 @@ const handleGet = (request, response, parsedUrl) => {
 };
 
 const handleHead = (request, response, parsedUrl) => {
-    const func = headUrlStruct[parsedUrl.pathname];
+  const func = headUrlStruct[parsedUrl.pathname];
 
-    if (func) {
-        func(request, response);
-    } else {
-        getUrlStruct.notFound(request, response);
-    }
+  if (func) {
+    func(request, response);
+  } else {
+    getUrlStruct.notFound(request, response);
+  }
 };
 
 const handlePost = (request, response, parsedUrl) => {
-    const func = postUrlStruct[parsedUrl.pathname];
-  
-    if (func) {
-      parseBody(request, response, func);
-    } else {
-      getUrlStruct.notFound(request, response);
-    }
+  const func = postUrlStruct[parsedUrl.pathname];
+
+  if (func) {
+    parseBody(request, response, func);
+  } else {
+    getUrlStruct.notFound(request, response);
+  }
 };
 
 // onRequest Function

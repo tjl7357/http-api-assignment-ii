@@ -5,7 +5,7 @@
   <link rel="stylesheet" type="text/css" href="/style.css">
   
   <script>
-    const handleResponse = async (response) => {
+    const handleResponse = async (response, method) => {
       const content = document.querySelector('#content');
 
       switch (response.status){
@@ -17,7 +17,7 @@
           break;
         case 204:
           content.innerHTML = '<b>Updated (No Content)</b>';
-          break;
+          return;
         case 400:
           content.innerHTML = '<b>Bad Request</b>';
           break;
@@ -29,12 +29,15 @@
           break;
       }
 
-      const obj = await response.json();
-      if (obj.users){
-        content.innerHTML += `<p>${JSON.stringify(obj.users)}</p>`;
-      } else if (obj.message) {
-        content.innerHTML += `<p>${obj.message}</p>`;
+      if (method !== 'head'){
+        const obj = await response.json();
+        if (obj.users){
+          content.innerHTML += `<p>${JSON.stringify(obj.users)}</p>`;
+        } else if (obj.message) {
+          content.innerHTML += `<p>${obj.message}</p>`;
+        }
       }
+      
     };
 
     const sendPost = async (nameForm) => {
@@ -55,7 +58,7 @@
         body: formData,
       });
 
-      handleResponse(response);
+      handleResponse(response, method);
     };
 
     const sendFetch = async (userForm) => {
@@ -65,12 +68,12 @@
         const options = {
           method: method,
           headers: {
-            'Accept': 'application/json',
+            'accept': 'application/json',
           }
         };
 
         const response = await fetch(userForm.querySelector('#urlField').value, options);
-        handleResponse(response);
+        handleResponse(response, method);
       } catch (err) {
         console.log(err);
       }

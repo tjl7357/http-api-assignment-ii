@@ -32,7 +32,7 @@ const getUsers = (request, response) => {
 };
 
 const getUsersMeta = (request, response) => {
-    respondJSONMeta(request, response, 200);
+  respondJSONMeta(request, response, 200);
 };
 
 // addUser Function
@@ -67,17 +67,17 @@ const addUser = (request, response, body) => {
 
 // Not Real Responses
 const getNotFound = (request, response) => {
-    const responseJSON = {
-        message: 'The page you were looking for was not found',
-        id: 'notFound'
-    }
+  const responseJSON = {
+    message: 'The page you were looking for was not found',
+    id: 'notFound',
+  };
 
-    respondJSON(request, response, 404, responseJSON);
+  respondJSON(request, response, 404, responseJSON);
 };
 
 const getNotFoundMeta = (request, response) => {
-    respondJSONMeta(request, repsonse, 404);
-}
+  respondJSONMeta(request, response, 404);
+};
 
 // Exports
 module.exports = {
