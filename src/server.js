@@ -64,7 +64,7 @@ const handleHead = (request, response, parsedUrl) => {
   if (func) {
     func(request, response);
   } else {
-    getUrlStruct.notFound(request, response);
+    headUrlStruct.notFound(request, response);
   }
 };
 
